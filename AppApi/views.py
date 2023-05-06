@@ -59,9 +59,40 @@ class UserDetailView(generics.RetrieveAPIView):
             
 class PrivateAccountView(generics.UpdateAPIView):
     queryset = User.objects.all()
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly,]
+    permission_classes = [permissions.IsAuthenticated,]
     serializer_class = PrivateAccountSerializer
     parser_classes = (MultiPartParser, FormParser)
+    def update(self, request, *args, **kwargs):
+        # Get the updated data from the request
+        is_private = request.data.get('is_private')
+        tes=False
+        print(tes)
+        print(is_private)
+        if is_private=='false':
+            current_user=request.user
+            print(current_user)
+            request_list=current_user.requested_by.all()
+            # for user in request_list:
+            #     current_user.followers.add(user)
+            #     current_user.requested_by.remove(user)
+            # current_user.followers.add()
+            users_to_add = [user for user in request_list if user not in current_user.followers.all()]
+            current_user.followers.add(*users_to_add)
+            current_user.requested_by.remove(*users_to_add)
+            
+            
+        
+        return super().update(request, *args, **kwargs)
+
+class CheckPrivateAccountView(APIView):
+    permission_classes = [permissions.IsAuthenticated,]
+    serializer_class = PrivateAccountSerializer
+    parser_classes = (MultiPartParser, FormParser)
+    def get(self, request):
+        # Get the authenticated user
+        current_user = request.user
+       
+        return Response({'is_private': current_user.is_private})
     
 class BlockedUsersView(generics.RetrieveAPIView):
     queryset = User.objects.all()
@@ -403,6 +434,9 @@ class RegisterUserView(generics.CreateAPIView):
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
             
         })
+
+#/home/posttrex/posttex_backend
+#/home/posttrex/.virtualenvs/venv
 
 class LoginView(generics.GenericAPIView):
     permission_classes = (permissions.AllowAny,)

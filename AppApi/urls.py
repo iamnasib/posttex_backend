@@ -3,7 +3,7 @@ from AppApi import views
 from . import consumers
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import (DeleteNotificationView, MarkMessagesAsReadView, PrivateAccountView, RegisterUserView,LoginView,ChangePasswordView, RemoveFollowerView, SearchView,ChatDetailView, 
+from .views import (CheckPrivateAccountView, DeleteNotificationView, MarkMessagesAsReadView, PrivateAccountView, RegisterUserView,LoginView,ChangePasswordView, RemoveFollowerView, SearchView,ChatDetailView, 
                     UserDetailView, BlockedUsersView, RecentChatsView,MarkChatAsDeletedView,EditUserView,FollowToggleUserView,
                     FollowUsersListView,FollowRequestsView,AcceptFollowRequestView,DeleteFollowRequestView,
                     NotificationsView,UnreadNotificationsLengthView,MarkAllNotificationsAsReadView,UnreadMessagesBadge, UserFeedbackCreateView, UserVerificationCreateView)
@@ -33,6 +33,7 @@ urlpatterns =  [
     path('api/delete-chat', MarkChatAsDeletedView.as_view(), name='delete-chat'),
     path('api/user/<str:username>', UserDetailView.as_view(), name='user-detail'),
     path('api/private-account/<int:pk>', PrivateAccountView.as_view(), name='private-account'),
+    path('api/check-private-account', CheckPrivateAccountView.as_view(), name='check-private-account'),
     path('api/blocked-users/<int:pk>', BlockedUsersView.as_view(), name='blocked-users'),
     path('api/block-user/<int:pk>', views.blockUser, name='block-user'),
     path('api/follow-toggle/<int:pk>', FollowToggleUserView.as_view(), name='follow-toggle'),
